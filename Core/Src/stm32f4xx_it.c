@@ -41,7 +41,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+volatile uint32_t tick_10us = 0, tick_ms = 0, tick_second = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -51,11 +51,22 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static const TIMED_PERIOD timed_task_second[] =
+{
+//    { 3, 0,  Running_TMP117_StateMachine_Iteration },
+    { 0, 0, NULL }
+};
+
+static const TIMED_PERIOD timed_task_ms[] =
+{
+    //{ 200, 0, Running_ADS1114_StateMachine_Iteration },
+		{ 0, 0, NULL }
+};
 
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -187,7 +198,36 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
+	tick_ms++;
 
+	if (tick_ms == 1000)
+	{
+		tick_ms = 0;
+		tick_second++;
+
+		for (const TIMED_PERIOD *ptr = timed_task_second; ptr->interval != 0; ptr++)
+		{
+			if (!((tick_second - ptr->offset) % ptr->interval) && (ptr->proc != NULL))
+			{
+				/* Time to call the function */
+				(ptr->proc)();
+			}
+		}
+	}
+
+	if (tick_second == 60)
+	{
+		tick_second = 0;
+	}
+
+	for (const TIMED_PERIOD *ptr = timed_task_ms; ptr->interval != 0; ptr++)
+	{
+		if (!((tick_ms - ptr->offset) % ptr->interval) && (ptr->proc != NULL))
+		{
+			/* Time to call the function */
+			(ptr->proc)();
+		}
+	}
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -197,6 +237,20 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
+}
 
 /* USER CODE BEGIN 1 */
 

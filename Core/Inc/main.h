@@ -31,12 +31,19 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "comm_uart.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+typedef struct {
+	uint8_t RxReady;
+	uint8_t TxDone;
+	uint8_t RxData[32];
+	uint8_t TxData[32];
+	uint8_t *pRxData;
+	uint8_t *pTxData;
+} UartData;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

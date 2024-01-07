@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "spi.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -45,13 +46,27 @@
 
 /* USER CODE BEGIN PV */
 /* Buffer used for transmission */
-uint8_t aTxBuffer[16] = { 0x47 };
+//uint8_t aTxBuffer[16] = { 0x47 };
+//
+///* Buffer used for reception */
+//UartData TTY;
+//uint8_t aRxBuffer[16]= { 0, 0, 0, 0,
+//						 0, 0, 0, 0,
+//						 0, 0, 0, 0,
+//						 0, 0, 0, 0 };
+//
+//uint8_t RxData[32];
+//uint8_t *pRxData = &TTY.RxData[0];
+//uint8_t TxData[16]= { 34, 35, 36, 37,
+//						 34, 35, 36, 37,
+//						 34, 35, 36, 37,
+//						 34, 35, 36, 37 };
 
-/* Buffer used for reception */
-uint8_t aRxBuffer[16]= { 0, 0, 0, 0,
-						 0, 0, 0, 0,
-						 0, 0, 0, 0,
-						 0, 0, 0, 0 };
+//uint8_t TTY.TxData[16]= { 34, 35, 36, 37,
+//						 34, 35, 36, 37,
+//						 34, 35, 36, 37,
+//						 34, 35, 36, 37 };
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -94,8 +109,14 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+  Running_UART_Comm_Init();
+//  if(HAL_UART_Receive_IT (&huart1, NULL,1)!= HAL_OK)
+//  {
+//    Error_Handler();
+//  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -105,11 +126,21 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_Delay(500);
-	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
-	  HAL_SPI_TransmitReceive (&hspi1, aTxBuffer, aRxBuffer, 16, 1000);
-	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
-	  HAL_Delay(500);
+//	  HAL_Delay(500);
+//	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
+//	  HAL_SPI_TransmitReceive (&hspi1, aTxBuffer, aRxBuffer, 16, 1000);
+//	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+//	  HAL_Delay(500);
+//	  if(HAL_UART_Transmit(&huart1, (uint8_t *)TxData,16,300)!= HAL_OK)
+//	  {
+//	    Error_Handler();
+//	  }
+//	  if(HAL_UART_Transmit_IT (&huart1, (uint8_t *)TxData,16)!= HAL_OK)
+//	  {
+//	    Error_Handler();
+//	  }
+//	  char * result = strstr(RxData , "admin" );
+	  HAL_Delay(3000);
   }
   /* USER CODE END 3 */
 }
@@ -160,7 +191,30 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+  * @brief  Tx Transfer completed callback
+  * @param  UartHandle: UART handle.
+  * @note   This example shows a simple way to report end of IT Tx transfer, and
+  *         you can add your own implementation.
+  * @retval None
+  */
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+  /* Turn LED1 on: Transfer in transmission process is correct */
+	 HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+}
 
+/**
+  * @brief  Rx Transfer completed callback
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report end of IT Rx transfer, and
+  *         you can add your own implementation.
+  * @retval None
+  */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
+{
+	Running_UART_Rx_Process();
+}
 /* USER CODE END 4 */
 
 /**
