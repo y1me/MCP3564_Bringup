@@ -46,14 +46,14 @@
 
 /* USER CODE BEGIN PV */
 /* Buffer used for transmission */
-//uint8_t aTxBuffer[16] = { 0x47 };
+uint8_t aTxBuffer[16] = { 0x47 };
 //
 ///* Buffer used for reception */
 //UartData TTY;
-//uint8_t aRxBuffer[16]= { 0, 0, 0, 0,
-//						 0, 0, 0, 0,
-//						 0, 0, 0, 0,
-//						 0, 0, 0, 0 };
+uint8_t aRxBuffer[16]= { 0, 0, 0, 0,
+						 0, 0, 0, 0,
+						 0, 0, 0, 0,
+						 0, 0, 0, 0 };
 //
 //uint8_t RxData[32];
 //uint8_t *pRxData = &TTY.RxData[0];
@@ -121,16 +121,96 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  HAL_Delay(500);
-//	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
-//	  HAL_SPI_TransmitReceive (&hspi1, aTxBuffer, aRxBuffer, 16, 1000);
-//	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
-//	  HAL_Delay(500);
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
+	  aTxBuffer[0] = 0x78;
+	  if(HAL_SPI_Transmit(&hspi1, aTxBuffer, 1, 1000)!= HAL_OK)
+  	  {
+ 	    Error_Handler();
+  	  }
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+
+
+	  HAL_Delay(2000);
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
+	  aTxBuffer[0] = 0x47;
+	  if(HAL_SPI_TransmitReceive (&hspi1, aTxBuffer, aRxBuffer, 16, 1000)!= HAL_OK)
+	  {
+		Error_Handler();
+	  }
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+
+
+	  HAL_Delay(2000);
+
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
+		aTxBuffer[0] = 0x46;
+		aTxBuffer[1] = 0x63;
+		aTxBuffer[2] = 0x20;
+		aTxBuffer[3] = 0x89;
+		aTxBuffer[4] = 0x80;
+		aTxBuffer[5] = 0x07;
+		aTxBuffer[6] = 0xBC;
+	  if(HAL_SPI_Transmit(&hspi1, aTxBuffer, 7, 1000)!= HAL_OK)
+		  {
+		Error_Handler();
+		  }
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+
+	  HAL_Delay(2000);
+
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
+		aTxBuffer[0] = 0x47;
+		aTxBuffer[1] = 0;
+		aTxBuffer[2] = 0;
+		aTxBuffer[3] = 0;
+		aTxBuffer[4] = 0;
+		aTxBuffer[5] = 0;
+		aTxBuffer[6] = 0;
+	  if(HAL_SPI_TransmitReceive (&hspi1, aTxBuffer, aRxBuffer, 16, 1000)!= HAL_OK)
+	  {
+		Error_Handler();
+	  }
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+	  while (1)
+	  {
+	  HAL_Delay(2000);
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
+	  aTxBuffer[0] = 0x6C;
+	  if(HAL_SPI_Transmit(&hspi1, aTxBuffer, 1, 1000)!= HAL_OK)
+  	  {
+ 	    Error_Handler();
+  	  }
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+
+
+	  HAL_Delay(2000);
+		aRxBuffer[0] = 0;
+		aRxBuffer[1] = 0;
+		aRxBuffer[2] = 0;
+		aRxBuffer[3] = 0;
+		aRxBuffer[4] = 0;
+		aRxBuffer[5] = 0;
+		aRxBuffer[6] = 0;
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 0);
+		aTxBuffer[0] = 0x43;
+		aTxBuffer[1] = 0;
+		aTxBuffer[2] = 0;
+		aTxBuffer[3] = 0;
+		aTxBuffer[4] = 0;
+		aTxBuffer[5] = 0;
+		aTxBuffer[6] = 0;
+	  if(HAL_SPI_TransmitReceive (&hspi1, aTxBuffer, aRxBuffer, 6, 1000)!= HAL_OK)
+	  {
+		Error_Handler();
+	  }
+	  HAL_GPIO_WritePin( GPIOA, GPIO_PIN_4, 1);
+
+
+	  HAL_Delay(500);
 //	  if(HAL_UART_Transmit(&huart1, (uint8_t *)TxData,16,300)!= HAL_OK)
 //	  {
 //	    Error_Handler();
@@ -140,7 +220,6 @@ int main(void)
 //	    Error_Handler();
 //	  }
 //	  char * result = strstr(RxData , "admin" );
-	  HAL_Delay(3000);
   }
   /* USER CODE END 3 */
 }

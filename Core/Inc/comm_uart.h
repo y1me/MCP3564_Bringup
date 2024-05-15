@@ -23,6 +23,17 @@ extern "C" {
 #define COMM_PARAM_UART    (&huart1)
 #endif
 
+#ifndef UART_BUFF_RX_SIZE
+#define UART_BUFF_RX_SIZE    32
+#endif
+
+#ifndef UART_BUFF_TX_SIZE
+#define UART_BUFF_TX_SIZE    32
+#endif
+
+#define NUMBER_OF_COMMAND 32
+#define MAX_COMMAND_SIZE 32
+
 
 typedef enum {
 	TTY_RX_CR,
@@ -52,11 +63,14 @@ typedef enum {
 typedef struct tty_data {
 	state_uart_t RxStatus;
 	state_uart_t TxStatus;
-	uint8_t RxData[32];
-	uint8_t TxData[32];
+	uint8_t RxData[UART_BUFF_RX_SIZE];
+	uint8_t TxData[UART_BUFF_TX_SIZE];
 	uint8_t *pRxData;
 	uint8_t *pTxData;
 } tty_data_t;
+
+typedef struct stringcase { char* string; void (*func)(void); }stringcase_t;
+
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
@@ -65,5 +79,6 @@ typedef struct tty_data {
 
 void Running_UART_Rx_Process(void);
 void Running_UART_Comm_Init(void);
+void Process_UART_Rx_Command(void);
 
 #endif /* INC_COMM_UART_H_ */
