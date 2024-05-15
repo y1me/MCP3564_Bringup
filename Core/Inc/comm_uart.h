@@ -42,6 +42,11 @@ typedef enum {
 	TTY_TX_DONE
 } state_uart_t;
 
+typedef enum {
+	COMMAND_PENDING,
+	COMMAND_EMPTY
+} state_command_t;
+
 
 
 /* End ADS1114 state machine structures */
@@ -68,6 +73,14 @@ typedef struct tty_data {
 	uint8_t *pRxData;
 	uint8_t *pTxData;
 } tty_data_t;
+
+typedef struct Command_data {
+
+	state_uart_t CommandStatus;
+	uint8_t comm_arr[NUMBER_OF_COMMAND][MAX_COMMAND_SIZE];
+	uint8_t *pCommandToProcess;
+	uint8_t *pCommandToStore;
+} Command_data_t;
 
 typedef struct stringcase { char* string; void (*func)(void); }stringcase_t;
 

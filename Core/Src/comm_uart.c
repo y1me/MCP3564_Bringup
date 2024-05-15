@@ -5,6 +5,7 @@
  *      Author: blobby
  */
 #include "comm_uart.h"
+#include "stdio.h"
 #include "string.h"
 
 
@@ -53,6 +54,7 @@ void UART_Rx_Process(tty_data_t *data)
 	}
 
 	if (*(data->pRxData-1) == '\r') {
+		printf("Hello World\n\r");
 		data->RxStatus = TTY_RX_CR;
 	}
 	else {
@@ -93,6 +95,7 @@ void Receive_UART_Rx_Command(tty_data_t *data)
 		strncpy( pcomm_arr, data->RxData,(data->pRxData - &data->RxData[0])-1);
 		pcomm_arr += MAX_COMMAND_SIZE;
 		data->pRxData = &data->RxData[0];
+		*data->pRxData = 0;
 	}
 
 }
