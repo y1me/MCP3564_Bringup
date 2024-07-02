@@ -54,13 +54,14 @@ volatile uint32_t tick_10us = 0, tick_ms = 0, tick_second = 0;
 static const TIMED_PERIOD timed_task_second[] =
 {
 //    { 3, 0,  Running_TMP117_StateMachine_Iteration },
-		{ 2, 0, Process_UART_Rx_Command},
+	//{ 2, 0, Process_UART_Rx_Command},
     { 0, 0, NULL }
 };
 
 static const TIMED_PERIOD timed_task_ms[] =
 {
     //{ 200, 0, Running_ADS1114_StateMachine_Iteration },
+		{ 200, 0, Running_COMMAND_Process },
 
 		{ 0, 0, NULL }
 };

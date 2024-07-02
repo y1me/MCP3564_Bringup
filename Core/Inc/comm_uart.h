@@ -68,18 +68,18 @@ typedef enum {
 typedef struct tty_data {
 	state_uart_t RxStatus;
 	state_uart_t TxStatus;
-	uint8_t RxData[UART_BUFF_RX_SIZE];
-	uint8_t TxData[UART_BUFF_TX_SIZE];
-	uint8_t *pRxData;
-	uint8_t *pTxData;
+	char RxData[UART_BUFF_RX_SIZE];
+	char TxData[UART_BUFF_TX_SIZE];
+	char *pRxData;
+	char *pTxData;
 } tty_data_t;
 
 typedef struct Command_data {
 
 	state_uart_t CommandStatus;
-	uint8_t comm_arr[NUMBER_OF_COMMAND][MAX_COMMAND_SIZE];
-	uint8_t *pCommandToProcess;
-	uint8_t *pCommandToStore;
+	char comm_arr[NUMBER_OF_COMMAND][MAX_COMMAND_SIZE];
+	char *pCommandToProcess;
+	char *pCommandToStore;
 } Command_data_t;
 
 typedef struct stringcase { char* string; void (*func)(void); }stringcase_t;
@@ -93,5 +93,6 @@ typedef struct stringcase { char* string; void (*func)(void); }stringcase_t;
 void Running_UART_Rx_Process(void);
 void Running_UART_Comm_Init(void);
 void Process_UART_Rx_Command(void);
+void Running_COMMAND_Process(void);
 
 #endif /* INC_COMM_UART_H_ */
