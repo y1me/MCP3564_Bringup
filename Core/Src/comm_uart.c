@@ -12,11 +12,14 @@
 tty_data_t UART_data;
 Command_data_t COMMAND_data;
 
-void funcB1() {
-	printf("Valid Command B1 executed\n\r");
+void funcB1(const char *arg) {
+	printf("Valid Command B1 executed\n");
+	printf("%s\n", arg);
+
 }
-void funcAzA(){
-	printf("Valid Command AzA executed\n\r");
+void funcAzA(const char *arg){
+	printf("Valid Command AzA executed\n");
+	printf("%s\n",arg);
 }
 
 stringcase_t cases [] =
@@ -30,21 +33,26 @@ void COMMAND_Process( Command_data_t *Cdata ) {
 	 ; pCase++ )
 	{
 		if( 0 == strcmp( pCase->string, Cdata->pCommandToProcess ) ) {
-		   (*pCase->func)();
+		   (*pCase->func)(Cdata->pArgToProcess);
 		   break;
 		}
 	}
-	if (Cdata->pCommandToProcess == &Cdata->comm_arr[31] && &Cdata->comm_arr[31] != Cdata->pCommandToStore) {
+	if (Cdata->pCommandToProcess == &Cdata->comm_array[31] && &Cdata->comm_array[31] != Cdata->pCommandToStore) {
 		for(int idx=0; idx<MAX_COMMAND_SIZE;idx++) {
 			*Cdata->pCommandToProcess = '\0';
 			*Cdata->pCommandToProcess++;
+			*Cdata->pArgToProcess = '\0';
+			*Cdata->pArgToProcess++;
 		}
-		Cdata->pCommandToProcess = &Cdata->comm_arr[0];
+		Cdata->pCommandToProcess = &Cdata->comm_array[0];
+		Cdata->pArgToProcess = &Cdata->arg_array[0];
 	}
 	else if (Cdata->pCommandToProcess != Cdata->pCommandToStore) {
 		for(int idx=0; idx<MAX_COMMAND_SIZE;idx++) {
 			*Cdata->pCommandToProcess = '\0';
 			*Cdata->pCommandToProcess++;
+			*Cdata->pArgToProcess = '\0';
+			*Cdata->pArgToProcess++;
 		}
 	}
 }
@@ -95,8 +103,10 @@ void UART_Comm_Init(tty_data_t *data)
 void COMMAND_Data_Init(Command_data_t *data)
 {
 	data->CommandStatus = COMMAND_EMPTY;
-	data->pCommandToStore = &data->comm_arr[0];
-	data->pCommandToProcess = &data->comm_arr[0];
+	data->pCommandToStore = &data->comm_array[0];
+	data->pCommandToProcess = &data->comm_array[0];
+	data->pArgToStore = &data->arg_array[0];
+	data->pArgToProcess = &data->arg_array[0];
 
 }
 
@@ -118,16 +128,28 @@ void Running_COMMAND_Process(void)
 
 void Receive_UART_Rx_Command(tty_data_t *data, Command_data_t *Cdata)
 {
+	char *token;
 	if (data->RxStatus == TTY_RX_CR){
-		strncpy( Cdata->pCommandToStore, data->RxData,(data->pRxData - &data->RxData[0]));
-		if (Cdata->pCommandToStore == &Cdata->comm_arr[31]) {
-			Cdata->pCommandToStore = &Cdata->comm_arr[0];
+		*data->pRxData = NULL;
+		token = strtok(&data->RxData[0]," ");
+		//token =
+		strncpy( Cdata->pCommandToStore, token, MAX_COMMAND_SIZE);
+		token = strtok(NULL," ");
+		strncpy( Cdata->pArgToStore, token, MAX_COMMAND_SIZE);
+		data->pRxData = &data->RxData[0];
+		for(int idx=0; idx<MAX_COMMAND_SIZE;idx++) {
+			*data->pRxData = '\0';
+			*data->pRxData++;
+		}
+		if (Cdata->pCommandToStore == &Cdata->comm_array[31]) {
+			Cdata->pCommandToStore = &Cdata->comm_array[0];
+			Cdata->pArgToStore = &Cdata->arg_array[0];
 		}
 		else {
 			Cdata->pCommandToStore += MAX_COMMAND_SIZE;
+			Cdata->pArgToStore += MAX_COMMAND_SIZE;
 		}
 		data->pRxData = &data->RxData[0];
-		*data->pRxData = 0;
 		data->RxStatus = TTY_RX_DONE;
 	}
 

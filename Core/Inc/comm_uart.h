@@ -77,12 +77,15 @@ typedef struct tty_data {
 typedef struct Command_data {
 
 	state_uart_t CommandStatus;
-	char comm_arr[NUMBER_OF_COMMAND][MAX_COMMAND_SIZE];
+	char comm_array[NUMBER_OF_COMMAND][MAX_COMMAND_SIZE];
+	char arg_array[NUMBER_OF_COMMAND][MAX_COMMAND_SIZE];
 	char *pCommandToProcess;
 	char *pCommandToStore;
+	char *pArgToProcess;
+	char *pArgToStore;
 } Command_data_t;
 
-typedef struct stringcase { char* string; void (*func)(void); }stringcase_t;
+typedef struct stringcase { char* string; void (*func)(const char *arg); }stringcase_t;
 
 /* USER CODE END Includes */
 
